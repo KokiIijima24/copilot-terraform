@@ -60,3 +60,39 @@ Enjoy your workshop!
 [anthonyborton](https://github.com/anthonyborton)
 
 _v1.0 Released May, 2023_
+
+# Tips
+
+## VMサイズの選択方法
+
+```PowerShell
+$REGION = "jepaneast"
+az vm list-sizes --location $REGION --output table | Select-String "F"
+
+Output > 
+MaxDataDiskCount    MemoryInMb    Name                      NumberOfCores    OsDiskSizeInMb    ResourceDiskSizeInMb
+4                   2048          Standard_F1               1                1047552           16384
+8                   4096          Standard_F2               2                1047552           32768
+16                  8192          Standard_F4               4                1047552           65536
+32                  16384         Standard_F8               8                1047552           131072
+64                  32768         Standard_F16              16               1047552           262144
+4                   2048          Standard_F1s              1                1047552           4096
+8                   4096          Standard_F2s              2                1047552           8192
+16                  8192          Standard_F4s              4                1047552           16384
+32                  16384         Standard_F8s              8                1047552           32768
+64                  32768         Standard_F16s             16               1047552           65536
+4                   4096          Standard_F2s_v2           2                1047552           16384
+8                   8192          Standard_F4s_v2           4                1047552           32768
+16                  16384         Standard_F8s_v2           8                1047552           65536
+32                  32768         Standard_F16s_v2          16               1047552           131072
+32                  65536         Standard_F32s_v2          32               1047552           262144
+32                  98304         Standard_F48s_v2          48               1047552           393216
+32                  131072        Standard_F64s_v2          64               1047552           524288
+32                  147456        Standard_F72s_v2          72               1047552           589824
+8                   86016         Standard_FX4mds           4                1047552           172032
+24                  258048        Standard_FX12mds          12               1047552           516096
+32                  516096        Standard_FX24mds          24               1047552           1032192
+32                  774144        Standard_FX36mds          36               1047552           1548288
+32                  1032192       Standard_FX48mds          48               1047552           2064384
+```
+
