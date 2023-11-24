@@ -4,6 +4,28 @@ resource "azurerm_resource_group" "main" {
   location = var.location
 }
 
+// SSH key
+resource "random_pet" "ssh_key_name" {
+  prefix    = "ssh"
+  separator = ""
+}
+
+resource "azapi_resource_action" "ssh_public_key_gen" {
+  type        = "Microsoft.Compute/sshPublicKeys@2022-11-01"
+  resource_id = azapi_resource.ssh_public_key.id
+  action      = "generateKeyPair"
+  method      = "POST"
+
+  response_export_values = ["publicKey", "privateKey"]
+}
+
+resource "azapi_resource" "ssh_public_key" {
+  type      = "Microsoft.Compute/sshPublicKeys@2022-11-01"
+  name      = random_pet.ssh_key_name.id
+  location  = azurerm_resource_group.main.location
+  parent_id = azurerm_resource_group.main.id
+}
+
 // Virtual network
 resource "azurerm_virtual_network" "main" {
   name                = "${var.prefix}-network"
@@ -93,18 +115,30 @@ resource "azurerm_network_interface_security_group_association" "main" {
 
 
 // Virtual Machine
-resource "azurerm_virtual_machine" "main" {
-  name                  = "${var.prefix}-vm"
+resource "azurerm_linux_virtual_machine" "example" {
+  name                = "example-machine"
   location              = azurerm_resource_group.main.location
   resource_group_name   = azurerm_resource_group.main.name
-  network_interface_ids = [azurerm_network_interface.internal.id] // Change here to the desired network interface ID
-  vm_size               = "Standard_DS1_v2" // Change here to change vm size
+  size                = "Standard_F2"
+  admin_username      = "adminuser"
+  network_interface_ids = [
+    azurerm_network_interface.internal.id,
+  ]
 
-  storage_os_disk {
-    name              = "${var.prefix}-osdisk"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-    os_type           = "Linux" // Change here to change the OS type
+  admin_ssh_key {
+    username   = "adminuser"
+     public_key = jsondecode(azapi_resource_action.ssh_public_key_gen.output).publicKey
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
+    version   = "latest"
   }
 }

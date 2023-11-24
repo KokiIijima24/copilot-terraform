@@ -96,3 +96,7 @@ MaxDataDiskCount    MemoryInMb    Name                      NumberOfCores    OsD
 32                  1032192       Standard_FX48mds          48               1047552           2064384
 ```
 
+# Provider
+
+## AzAPI Provider
+https://learn.microsoft.com/ja-jp/azure/developer/terraform/overview-azapi-provider
