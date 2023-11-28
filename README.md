@@ -66,7 +66,7 @@ _v1.0 Released May, 2023_
 ## VMサイズの選択方法
 
 ```PowerShell
-$REGION = "jepaneast"
+$REGION = "japaneast"
 az vm list-sizes --location $REGION --output table | Select-String "F"
 
 Output > 
@@ -94,6 +94,18 @@ MaxDataDiskCount    MemoryInMb    Name                      NumberOfCores    OsD
 32                  516096        Standard_FX24mds          24               1047552           1032192
 32                  774144        Standard_FX36mds          36               1047552           1548288
 32                  1032192       Standard_FX48mds          48               1047552           2064384
+```
+
+## 利用可能なVMイメージを取得
+
+参考：[[Azure]TerraformでデプロイするLinux VMイメージの情報をjqでイイカンジに調べる方法](https://zenn.dev/gkz/articles/azure-provider-terraform-jq)
+
+```Powershell
+PS > az vm image list --output table
+You are viewing an offline list of images, use --all to retrieve an up-to-date list
+Architecture    Offer                         Publisher               Sku                                 Urn                                                                             UrnAlias                 Version
+--------------  ----------------------------  ----------------------  ----------------------------------  ------------------------------------------------------------------------------  -----------------------  ---------
+x64             0001-com-ubuntu-server-jammy  Canonical               22_04-lts-gen2                      Canonical:0001-com-ubuntu-server-jammy:22_04-lts-gen2:latest                    Ubuntu2204               latest
 ```
 
 # Provider

@@ -1,0 +1,2880 @@
+[{
+ "configuration": {
+  "provider_config": {
+   "azapi": {
+    "full_name": "registry.terraform.io/azure/azapi",
+    "name": "azapi",
+    "version_constraint": "~\u003e 1.5"
+   },
+   "azuread": {
+    "full_name": "registry.terraform.io/hashicorp/azuread",
+    "name": "azuread"
+   },
+   "azurerm": {
+    "expressions": {
+     "features": [
+      {}
+     ]
+    },
+    "full_name": "registry.terraform.io/hashicorp/azurerm",
+    "name": "azurerm",
+    "version_constraint": "~\u003e 2.0"
+   },
+   "random": {
+    "full_name": "registry.terraform.io/hashicorp/random",
+    "name": "random"
+   }
+  },
+  "root_module": {
+   "resources": [
+    {
+     "address": "azapi_resource.ssh_public_key",
+     "expressions": {
+      "location": {
+       "references": [
+        "azurerm_resource_group.main.location",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "name": {
+       "references": [
+        "random_pet.ssh_key_name.id",
+        "random_pet.ssh_key_name"
+       ]
+      },
+      "parent_id": {
+       "references": [
+        "azurerm_resource_group.main.id",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "type": {
+       "constant_value": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+      }
+     },
+     "mode": "managed",
+     "name": "ssh_public_key",
+     "provider_config_key": "azapi",
+     "schema_version": 0,
+     "type": "azapi_resource"
+    },
+    {
+     "address": "azapi_resource_action.ssh_public_key_gen",
+     "expressions": {
+      "action": {
+       "constant_value": "generateKeyPair"
+      },
+      "method": {
+       "constant_value": "POST"
+      },
+      "resource_id": {
+       "references": [
+        "azapi_resource.ssh_public_key.id",
+        "azapi_resource.ssh_public_key"
+       ]
+      },
+      "response_export_values": {
+       "constant_value": [
+        "publicKey",
+        "privateKey"
+       ]
+      },
+      "type": {
+       "constant_value": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+      }
+     },
+     "mode": "managed",
+     "name": "ssh_public_key_gen",
+     "provider_config_key": "azapi",
+     "schema_version": 0,
+     "type": "azapi_resource_action"
+    },
+    {
+     "address": "azurerm_linux_virtual_machine.example",
+     "expressions": {
+      "admin_ssh_key": [
+       {
+        "public_key": {
+         "references": [
+          "azapi_resource_action.ssh_public_key_gen.output",
+          "azapi_resource_action.ssh_public_key_gen"
+         ]
+        },
+        "username": {
+         "constant_value": "adminuser"
+        }
+       }
+      ],
+      "admin_username": {
+       "constant_value": "adminuser"
+      },
+      "location": {
+       "references": [
+        "azurerm_resource_group.main.location",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "name": {
+       "constant_value": "example-machine"
+      },
+      "network_interface_ids": {
+       "references": [
+        "azurerm_network_interface.internal.id",
+        "azurerm_network_interface.internal"
+       ]
+      },
+      "os_disk": [
+       {
+        "caching": {
+         "constant_value": "ReadWrite"
+        },
+        "storage_account_type": {
+         "constant_value": "Standard_LRS"
+        }
+       }
+      ],
+      "resource_group_name": {
+       "references": [
+        "azurerm_resource_group.main.name",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "size": {
+       "constant_value": "Standard_F2"
+      },
+      "source_image_reference": [
+       {
+        "offer": {
+         "constant_value": "0001-com-ubuntu-server-jammy"
+        },
+        "publisher": {
+         "constant_value": "Canonical"
+        },
+        "sku": {
+         "constant_value": "22_04-lts"
+        },
+        "version": {
+         "constant_value": "latest"
+        }
+       }
+      ]
+     },
+     "mode": "managed",
+     "name": "example",
+     "provider_config_key": "azurerm",
+     "schema_version": 0,
+     "type": "azurerm_linux_virtual_machine"
+    },
+    {
+     "address": "azurerm_network_interface.internal",
+     "expressions": {
+      "ip_configuration": [
+       {
+        "name": {
+         "constant_value": "internal"
+        },
+        "private_ip_address_allocation": {
+         "constant_value": "Dynamic"
+        },
+        "subnet_id": {
+         "references": [
+          "azurerm_subnet.internal.id",
+          "azurerm_subnet.internal"
+         ]
+        }
+       }
+      ],
+      "location": {
+       "references": [
+        "azurerm_resource_group.main.location",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "name": {
+       "references": [
+        "var.prefix"
+       ]
+      },
+      "resource_group_name": {
+       "references": [
+        "azurerm_resource_group.main.name",
+        "azurerm_resource_group.main"
+       ]
+      }
+     },
+     "mode": "managed",
+     "name": "internal",
+     "provider_config_key": "azurerm",
+     "schema_version": 0,
+     "type": "azurerm_network_interface"
+    },
+    {
+     "address": "azurerm_network_interface.main",
+     "expressions": {
+      "ip_configuration": [
+       {
+        "name": {
+         "constant_value": "primary"
+        },
+        "private_ip_address_allocation": {
+         "constant_value": "Dynamic"
+        },
+        "public_ip_address_id": {
+         "references": [
+          "azurerm_public_ip.pip.id",
+          "azurerm_public_ip.pip"
+         ]
+        },
+        "subnet_id": {
+         "references": [
+          "azurerm_subnet.internal.id",
+          "azurerm_subnet.internal"
+         ]
+        }
+       }
+      ],
+      "location": {
+       "references": [
+        "azurerm_resource_group.main.location",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "name": {
+       "references": [
+        "var.prefix"
+       ]
+      },
+      "resource_group_name": {
+       "references": [
+        "azurerm_resource_group.main.name",
+        "azurerm_resource_group.main"
+       ]
+      }
+     },
+     "mode": "managed",
+     "name": "main",
+     "provider_config_key": "azurerm",
+     "schema_version": 0,
+     "type": "azurerm_network_interface"
+    },
+    {
+     "address": "azurerm_network_interface_security_group_association.main",
+     "expressions": {
+      "network_interface_id": {
+       "references": [
+        "azurerm_network_interface.main.id",
+        "azurerm_network_interface.main"
+       ]
+      },
+      "network_security_group_id": {
+       "references": [
+        "azurerm_network_security_group.main.id",
+        "azurerm_network_security_group.main"
+       ]
+      }
+     },
+     "mode": "managed",
+     "name": "main",
+     "provider_config_key": "azurerm",
+     "schema_version": 0,
+     "type": "azurerm_network_interface_security_group_association"
+    },
+    {
+     "address": "azurerm_network_security_group.main",
+     "expressions": {
+      "location": {
+       "references": [
+        "azurerm_resource_group.main.location",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "name": {
+       "references": [
+        "var.prefix"
+       ]
+      },
+      "resource_group_name": {
+       "references": [
+        "azurerm_resource_group.main.name",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "security_rule": {
+       "constant_value": [
+        {
+         "access": "Allow",
+         "description": null,
+         "destination_address_prefix": "*",
+         "destination_address_prefixes": null,
+         "destination_application_security_group_ids": null,
+         "destination_port_range": "22",
+         "destination_port_ranges": null,
+         "direction": "Inbound",
+         "name": "SSH",
+         "priority": 1001,
+         "protocol": "Tcp",
+         "source_address_prefix": "*",
+         "source_address_prefixes": null,
+         "source_application_security_group_ids": null,
+         "source_port_range": "*",
+         "source_port_ranges": null
+        },
+        {
+         "access": "Allow",
+         "description": null,
+         "destination_address_prefix": "*",
+         "destination_address_prefixes": null,
+         "destination_application_security_group_ids": null,
+         "destination_port_range": "80",
+         "destination_port_ranges": null,
+         "direction": "Inbound",
+         "name": "web",
+         "priority": 1002,
+         "protocol": "Tcp",
+         "source_address_prefix": "*",
+         "source_address_prefixes": null,
+         "source_application_security_group_ids": null,
+         "source_port_range": "*",
+         "source_port_ranges": null
+        }
+       ]
+      }
+     },
+     "mode": "managed",
+     "name": "main",
+     "provider_config_key": "azurerm",
+     "schema_version": 0,
+     "type": "azurerm_network_security_group"
+    },
+    {
+     "address": "azurerm_public_ip.pip",
+     "expressions": {
+      "allocation_method": {
+       "constant_value": "Dynamic"
+      },
+      "location": {
+       "references": [
+        "azurerm_resource_group.main.location",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "name": {
+       "references": [
+        "var.prefix"
+       ]
+      },
+      "resource_group_name": {
+       "references": [
+        "azurerm_resource_group.main.name",
+        "azurerm_resource_group.main"
+       ]
+      }
+     },
+     "mode": "managed",
+     "name": "pip",
+     "provider_config_key": "azurerm",
+     "schema_version": 0,
+     "type": "azurerm_public_ip"
+    },
+    {
+     "address": "azurerm_resource_group.main",
+     "expressions": {
+      "location": {
+       "references": [
+        "var.location"
+       ]
+      },
+      "name": {
+       "references": [
+        "var.prefix"
+       ]
+      }
+     },
+     "mode": "managed",
+     "name": "main",
+     "provider_config_key": "azurerm",
+     "schema_version": 0,
+     "type": "azurerm_resource_group"
+    },
+    {
+     "address": "azurerm_subnet.internal",
+     "expressions": {
+      "address_prefixes": {
+       "constant_value": [
+        "10.0.2.0/24"
+       ]
+      },
+      "name": {
+       "constant_value": "internal"
+      },
+      "resource_group_name": {
+       "references": [
+        "azurerm_resource_group.main.name",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "virtual_network_name": {
+       "references": [
+        "azurerm_virtual_network.main.name",
+        "azurerm_virtual_network.main"
+       ]
+      }
+     },
+     "mode": "managed",
+     "name": "internal",
+     "provider_config_key": "azurerm",
+     "schema_version": 0,
+     "type": "azurerm_subnet"
+    },
+    {
+     "address": "azurerm_virtual_network.main",
+     "expressions": {
+      "address_space": {
+       "constant_value": [
+        "10.0.0.0/16"
+       ]
+      },
+      "location": {
+       "references": [
+        "azurerm_resource_group.main.location",
+        "azurerm_resource_group.main"
+       ]
+      },
+      "name": {
+       "references": [
+        "var.prefix"
+       ]
+      },
+      "resource_group_name": {
+       "references": [
+        "azurerm_resource_group.main.name",
+        "azurerm_resource_group.main"
+       ]
+      }
+     },
+     "mode": "managed",
+     "name": "main",
+     "provider_config_key": "azurerm",
+     "schema_version": 0,
+     "type": "azurerm_virtual_network"
+    },
+    {
+     "address": "random_pet.ssh_key_name",
+     "expressions": {
+      "prefix": {
+       "constant_value": "ssh"
+      },
+      "separator": {
+       "constant_value": ""
+      }
+     },
+     "mode": "managed",
+     "name": "ssh_key_name",
+     "provider_config_key": "random",
+     "schema_version": 0,
+     "type": "random_pet"
+    }
+   ],
+   "variables": {
+    "admin_password": {
+     "default": "P@ssw0rd1234",
+     "description": "Virtual Machine admin password"
+    },
+    "location": {
+     "default": "japaneast",
+     "description": "Region to create resources"
+    },
+    "prefix": {
+     "default": "copilot-workshop",
+     "description": "Prefix for all resources"
+    }
+   }
+  }
+ },
+ "errored": false,
+ "format_version": "1.2",
+ "planned_values": {
+  "root_module": {
+   "resources": [
+    {
+     "address": "azapi_resource.ssh_public_key",
+     "mode": "managed",
+     "name": "ssh_public_key",
+     "provider_name": "registry.terraform.io/azure/azapi",
+     "schema_version": 0,
+     "sensitive_values": {
+      "identity": [],
+      "tags": {}
+     },
+     "type": "azapi_resource",
+     "values": {
+      "body": "{}",
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle",
+      "identity": [],
+      "ignore_body_changes": null,
+      "ignore_casing": false,
+      "ignore_missing_property": true,
+      "location": "japaneast",
+      "locks": null,
+      "name": "sshbettergrackle",
+      "output": "{}",
+      "parent_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources",
+      "removing_special_chars": false,
+      "response_export_values": null,
+      "schema_validation_enabled": true,
+      "tags": {},
+      "timeouts": null,
+      "type": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+     }
+    },
+    {
+     "address": "azapi_resource_action.ssh_public_key_gen",
+     "mode": "managed",
+     "name": "ssh_public_key_gen",
+     "provider_name": "registry.terraform.io/azure/azapi",
+     "schema_version": 0,
+     "sensitive_values": {
+      "response_export_values": [
+       false,
+       false
+      ]
+     },
+     "type": "azapi_resource_action",
+     "values": {
+      "action": "generateKeyPair",
+      "body": null,
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle/generateKeyPair",
+      "locks": null,
+      "method": "POST",
+      "output": "{\"privateKey\":\"-----BEGIN RSA PRIVATE KEY-----\\r\\n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\\r\\n-----END RSA PRIVATE KEY-----\\r\\n\",\"publicKey\":\"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure\"}",
+      "resource_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle",
+      "response_export_values": [
+       "publicKey",
+       "privateKey"
+      ],
+      "timeouts": null,
+      "type": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+     }
+    },
+    {
+     "address": "azurerm_linux_virtual_machine.example",
+     "mode": "managed",
+     "name": "example",
+     "provider_name": "registry.terraform.io/hashicorp/azurerm",
+     "schema_version": 0,
+     "sensitive_values": {
+      "additional_capabilities": [],
+      "admin_ssh_key": [
+       {}
+      ],
+      "boot_diagnostics": [],
+      "identity": [],
+      "network_interface_ids": [
+       false
+      ],
+      "os_disk": [
+       {
+        "diff_disk_settings": []
+       }
+      ],
+      "plan": [],
+      "private_ip_addresses": [
+       false
+      ],
+      "public_ip_addresses": [],
+      "secret": [],
+      "source_image_reference": [
+       {}
+      ],
+      "tags": {}
+     },
+     "type": "azurerm_linux_virtual_machine",
+     "values": {
+      "additional_capabilities": [],
+      "admin_password": null,
+      "admin_ssh_key": [
+       {
+        "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure",
+        "username": "adminuser"
+       }
+      ],
+      "admin_username": "adminuser",
+      "allow_extension_operations": true,
+      "availability_set_id": "",
+      "boot_diagnostics": [],
+      "computer_name": "example-machine",
+      "custom_data": null,
+      "dedicated_host_group_id": "",
+      "dedicated_host_id": "",
+      "disable_password_authentication": true,
+      "encryption_at_host_enabled": false,
+      "eviction_policy": "",
+      "extensions_time_budget": "PT1H30M",
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine",
+      "identity": [],
+      "license_type": "",
+      "location": "japaneast",
+      "max_bid_price": -1,
+      "name": "example-machine",
+      "network_interface_ids": [
+       "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2"
+      ],
+      "os_disk": [
+       {
+        "caching": "ReadWrite",
+        "diff_disk_settings": [],
+        "disk_encryption_set_id": "",
+        "disk_size_gb": 30,
+        "name": "example-machine_OsDisk_1_9f7a1581e67b4d7a88f607ae64d52019",
+        "storage_account_type": "Standard_LRS",
+        "write_accelerator_enabled": false
+       }
+      ],
+      "patch_mode": "ImageDefault",
+      "plan": [],
+      "platform_fault_domain": -1,
+      "priority": "Regular",
+      "private_ip_address": "10.0.2.5",
+      "private_ip_addresses": [
+       "10.0.2.5"
+      ],
+      "provision_vm_agent": true,
+      "proximity_placement_group_id": "",
+      "public_ip_address": "",
+      "public_ip_addresses": [],
+      "resource_group_name": "copilot-workshop-resources",
+      "secret": [],
+      "secure_boot_enabled": false,
+      "size": "Standard_F2",
+      "source_image_id": "",
+      "source_image_reference": [
+       {
+        "offer": "0001-com-ubuntu-server-jammy",
+        "publisher": "Canonical",
+        "sku": "22_04-lts",
+        "version": "latest"
+       }
+      ],
+      "tags": {},
+      "timeouts": null,
+      "user_data": "",
+      "virtual_machine_id": "a4dbd25f-0aea-4ee1-9dcc-cbe077c0cb41",
+      "virtual_machine_scale_set_id": "",
+      "vtpm_enabled": false,
+      "zone": ""
+     }
+    },
+    {
+     "address": "azurerm_network_interface.internal",
+     "mode": "managed",
+     "name": "internal",
+     "provider_name": "registry.terraform.io/hashicorp/azurerm",
+     "schema_version": 0,
+     "sensitive_values": {
+      "applied_dns_servers": [],
+      "dns_servers": [],
+      "ip_configuration": [
+       {}
+      ],
+      "private_ip_addresses": [
+       false
+      ],
+      "tags": {}
+     },
+     "type": "azurerm_network_interface",
+     "values": {
+      "applied_dns_servers": [],
+      "dns_servers": [],
+      "enable_accelerated_networking": false,
+      "enable_ip_forwarding": false,
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2",
+      "internal_dns_name_label": "",
+      "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+      "ip_configuration": [
+       {
+        "gateway_load_balancer_frontend_ip_configuration_id": "",
+        "name": "internal",
+        "primary": true,
+        "private_ip_address": "10.0.2.5",
+        "private_ip_address_allocation": "Dynamic",
+        "private_ip_address_version": "IPv4",
+        "public_ip_address_id": "",
+        "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+       }
+      ],
+      "location": "japaneast",
+      "mac_address": "00-22-48-69-19-D0",
+      "name": "copilot-workshop-nic2",
+      "private_ip_address": "10.0.2.5",
+      "private_ip_addresses": [
+       "10.0.2.5"
+      ],
+      "resource_group_name": "copilot-workshop-resources",
+      "tags": {},
+      "timeouts": null,
+      "virtual_machine_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine"
+     }
+    },
+    {
+     "address": "azurerm_network_interface.main",
+     "mode": "managed",
+     "name": "main",
+     "provider_name": "registry.terraform.io/hashicorp/azurerm",
+     "schema_version": 0,
+     "sensitive_values": {
+      "applied_dns_servers": [],
+      "dns_servers": [],
+      "ip_configuration": [
+       {}
+      ],
+      "private_ip_addresses": [
+       false
+      ],
+      "tags": {}
+     },
+     "type": "azurerm_network_interface",
+     "values": {
+      "applied_dns_servers": [],
+      "dns_servers": [],
+      "enable_accelerated_networking": false,
+      "enable_ip_forwarding": false,
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1",
+      "internal_dns_name_label": "",
+      "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+      "ip_configuration": [
+       {
+        "gateway_load_balancer_frontend_ip_configuration_id": "",
+        "name": "primary",
+        "primary": true,
+        "private_ip_address": "10.0.2.4",
+        "private_ip_address_allocation": "Dynamic",
+        "private_ip_address_version": "IPv4",
+        "public_ip_address_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/publicIPAddresses/copilot-workshop-pip",
+        "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+       }
+      ],
+      "location": "japaneast",
+      "mac_address": "",
+      "name": "copilot-workshop-nic1",
+      "private_ip_address": "10.0.2.4",
+      "private_ip_addresses": [
+       "10.0.2.4"
+      ],
+      "resource_group_name": "copilot-workshop-resources",
+      "tags": {},
+      "timeouts": null,
+      "virtual_machine_id": ""
+     }
+    },
+    {
+     "address": "azurerm_network_interface_security_group_association.main",
+     "mode": "managed",
+     "name": "main",
+     "provider_name": "registry.terraform.io/hashicorp/azurerm",
+     "schema_version": 0,
+     "sensitive_values": {},
+     "type": "azurerm_network_interface_security_group_association",
+     "values": {
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1|/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+      "network_interface_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1",
+      "network_security_group_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+      "timeouts": null
+     }
+    },
+    {
+     "address": "azurerm_network_security_group.main",
+     "mode": "managed",
+     "name": "main",
+     "provider_name": "registry.terraform.io/hashicorp/azurerm",
+     "schema_version": 0,
+     "sensitive_values": {
+      "security_rule": [
+       {
+        "destination_address_prefixes": [],
+        "destination_application_security_group_ids": [],
+        "destination_port_ranges": [],
+        "source_address_prefixes": [],
+        "source_application_security_group_ids": [],
+        "source_port_ranges": []
+       },
+       {
+        "destination_address_prefixes": [],
+        "destination_application_security_group_ids": [],
+        "destination_port_ranges": [],
+        "source_address_prefixes": [],
+        "source_application_security_group_ids": [],
+        "source_port_ranges": []
+       }
+      ],
+      "tags": {}
+     },
+     "type": "azurerm_network_security_group",
+     "values": {
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+      "location": "japaneast",
+      "name": "copilot-workshop-nsg",
+      "resource_group_name": "copilot-workshop-resources",
+      "security_rule": [
+       {
+        "access": "Allow",
+        "description": "",
+        "destination_address_prefix": "*",
+        "destination_address_prefixes": [],
+        "destination_application_security_group_ids": [],
+        "destination_port_range": "22",
+        "destination_port_ranges": [],
+        "direction": "Inbound",
+        "name": "SSH",
+        "priority": 1001,
+        "protocol": "Tcp",
+        "source_address_prefix": "*",
+        "source_address_prefixes": [],
+        "source_application_security_group_ids": [],
+        "source_port_range": "*",
+        "source_port_ranges": []
+       },
+       {
+        "access": "Allow",
+        "description": "",
+        "destination_address_prefix": "*",
+        "destination_address_prefixes": [],
+        "destination_application_security_group_ids": [],
+        "destination_port_range": "80",
+        "destination_port_ranges": [],
+        "direction": "Inbound",
+        "name": "web",
+        "priority": 1002,
+        "protocol": "Tcp",
+        "source_address_prefix": "*",
+        "source_address_prefixes": [],
+        "source_application_security_group_ids": [],
+        "source_port_range": "*",
+        "source_port_ranges": []
+       }
+      ],
+      "tags": {},
+      "timeouts": null
+     }
+    },
+    {
+     "address": "azurerm_public_ip.pip",
+     "mode": "managed",
+     "name": "pip",
+     "provider_name": "registry.terraform.io/hashicorp/azurerm",
+     "schema_version": 0,
+     "sensitive_values": {
+      "ip_tags": {},
+      "tags": {},
+      "zones": []
+     },
+     "type": "azurerm_public_ip",
+     "values": {
+      "allocation_method": "Dynamic",
+      "availability_zone": "No-Zone",
+      "domain_name_label": null,
+      "fqdn": null,
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/publicIPAddresses/copilot-workshop-pip",
+      "idle_timeout_in_minutes": 4,
+      "ip_address": "",
+      "ip_tags": {},
+      "ip_version": "IPv4",
+      "location": "japaneast",
+      "name": "copilot-workshop-pip",
+      "public_ip_prefix_id": null,
+      "resource_group_name": "copilot-workshop-resources",
+      "reverse_fqdn": null,
+      "sku": "Basic",
+      "sku_tier": "Regional",
+      "tags": {},
+      "timeouts": null,
+      "zones": []
+     }
+    },
+    {
+     "address": "azurerm_resource_group.main",
+     "mode": "managed",
+     "name": "main",
+     "provider_name": "registry.terraform.io/hashicorp/azurerm",
+     "schema_version": 0,
+     "sensitive_values": {
+      "tags": {}
+     },
+     "type": "azurerm_resource_group",
+     "values": {
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources",
+      "location": "japaneast",
+      "name": "copilot-workshop-resources",
+      "tags": {},
+      "timeouts": null
+     }
+    },
+    {
+     "address": "azurerm_subnet.internal",
+     "mode": "managed",
+     "name": "internal",
+     "provider_name": "registry.terraform.io/hashicorp/azurerm",
+     "schema_version": 0,
+     "sensitive_values": {
+      "address_prefixes": [
+       false
+      ],
+      "delegation": [],
+      "service_endpoint_policy_ids": [],
+      "service_endpoints": []
+     },
+     "type": "azurerm_subnet",
+     "values": {
+      "address_prefix": "10.0.2.0/24",
+      "address_prefixes": [
+       "10.0.2.0/24"
+      ],
+      "delegation": [],
+      "enforce_private_link_endpoint_network_policies": false,
+      "enforce_private_link_service_network_policies": false,
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal",
+      "name": "internal",
+      "resource_group_name": "copilot-workshop-resources",
+      "service_endpoint_policy_ids": [],
+      "service_endpoints": [],
+      "timeouts": null,
+      "virtual_network_name": "copilot-workshop-network"
+     }
+    },
+    {
+     "address": "azurerm_virtual_network.main",
+     "mode": "managed",
+     "name": "main",
+     "provider_name": "registry.terraform.io/hashicorp/azurerm",
+     "schema_version": 0,
+     "sensitive_values": {
+      "address_space": [
+       false
+      ],
+      "ddos_protection_plan": [],
+      "dns_servers": [],
+      "subnet": [
+       {}
+      ],
+      "tags": {}
+     },
+     "type": "azurerm_virtual_network",
+     "values": {
+      "address_space": [
+       "10.0.0.0/16"
+      ],
+      "bgp_community": "",
+      "ddos_protection_plan": [],
+      "dns_servers": [],
+      "flow_timeout_in_minutes": 0,
+      "guid": "e86c3f80-c338-40fe-8e07-12a88b9adb0e",
+      "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network",
+      "location": "japaneast",
+      "name": "copilot-workshop-network",
+      "resource_group_name": "copilot-workshop-resources",
+      "subnet": [
+       {
+        "address_prefix": "10.0.2.0/24",
+        "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal",
+        "name": "internal",
+        "security_group": ""
+       }
+      ],
+      "tags": {},
+      "timeouts": null,
+      "vm_protection_enabled": false
+     }
+    },
+    {
+     "address": "random_pet.ssh_key_name",
+     "mode": "managed",
+     "name": "ssh_key_name",
+     "provider_name": "registry.terraform.io/hashicorp/random",
+     "schema_version": 0,
+     "sensitive_values": {},
+     "type": "random_pet",
+     "values": {
+      "id": "sshbettergrackle",
+      "keepers": null,
+      "length": 2,
+      "prefix": "ssh",
+      "separator": ""
+     }
+    }
+   ]
+  }
+ },
+ "prior_state": {
+  "format_version": "1.0",
+  "terraform_version": "1.6.4",
+  "values": {
+   "root_module": {
+    "resources": [
+     {
+      "address": "azapi_resource.ssh_public_key",
+      "depends_on": [
+       "azurerm_resource_group.main",
+       "random_pet.ssh_key_name"
+      ],
+      "mode": "managed",
+      "name": "ssh_public_key",
+      "provider_name": "registry.terraform.io/azure/azapi",
+      "schema_version": 0,
+      "sensitive_values": {
+       "identity": [],
+       "tags": {}
+      },
+      "type": "azapi_resource",
+      "values": {
+       "body": "{}",
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle",
+       "identity": [],
+       "ignore_body_changes": null,
+       "ignore_casing": false,
+       "ignore_missing_property": true,
+       "location": "japaneast",
+       "locks": null,
+       "name": "sshbettergrackle",
+       "output": "{}",
+       "parent_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources",
+       "removing_special_chars": false,
+       "response_export_values": null,
+       "schema_validation_enabled": true,
+       "tags": {},
+       "timeouts": null,
+       "type": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+      }
+     },
+     {
+      "address": "azapi_resource_action.ssh_public_key_gen",
+      "depends_on": [
+       "azapi_resource.ssh_public_key",
+       "azurerm_resource_group.main",
+       "random_pet.ssh_key_name"
+      ],
+      "mode": "managed",
+      "name": "ssh_public_key_gen",
+      "provider_name": "registry.terraform.io/azure/azapi",
+      "schema_version": 0,
+      "sensitive_values": {
+       "response_export_values": [
+        false,
+        false
+       ]
+      },
+      "type": "azapi_resource_action",
+      "values": {
+       "action": "generateKeyPair",
+       "body": null,
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle/generateKeyPair",
+       "locks": null,
+       "method": "POST",
+       "output": "{\"privateKey\":\"-----BEGIN RSA PRIVATE KEY-----\\r\\n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\\r\\n-----END RSA PRIVATE KEY-----\\r\\n\",\"publicKey\":\"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure\"}",
+       "resource_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle",
+       "response_export_values": [
+        "publicKey",
+        "privateKey"
+       ],
+       "timeouts": null,
+       "type": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+      }
+     },
+     {
+      "address": "azurerm_linux_virtual_machine.example",
+      "depends_on": [
+       "azapi_resource.ssh_public_key",
+       "azapi_resource_action.ssh_public_key_gen",
+       "azurerm_network_interface.internal",
+       "azurerm_resource_group.main",
+       "azurerm_subnet.internal",
+       "azurerm_virtual_network.main",
+       "random_pet.ssh_key_name"
+      ],
+      "mode": "managed",
+      "name": "example",
+      "provider_name": "registry.terraform.io/hashicorp/azurerm",
+      "schema_version": 0,
+      "sensitive_values": {
+       "additional_capabilities": [],
+       "admin_password": true,
+       "admin_ssh_key": [
+        {}
+       ],
+       "boot_diagnostics": [],
+       "custom_data": true,
+       "identity": [],
+       "network_interface_ids": [
+        false
+       ],
+       "os_disk": [
+        {
+         "diff_disk_settings": []
+        }
+       ],
+       "plan": [],
+       "private_ip_addresses": [
+        false
+       ],
+       "public_ip_addresses": [],
+       "secret": [],
+       "source_image_reference": [
+        {}
+       ],
+       "tags": {}
+      },
+      "type": "azurerm_linux_virtual_machine",
+      "values": {
+       "additional_capabilities": [],
+       "admin_password": null,
+       "admin_ssh_key": [
+        {
+         "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure",
+         "username": "adminuser"
+        }
+       ],
+       "admin_username": "adminuser",
+       "allow_extension_operations": true,
+       "availability_set_id": "",
+       "boot_diagnostics": [],
+       "computer_name": "example-machine",
+       "custom_data": null,
+       "dedicated_host_group_id": "",
+       "dedicated_host_id": "",
+       "disable_password_authentication": true,
+       "encryption_at_host_enabled": false,
+       "eviction_policy": "",
+       "extensions_time_budget": "PT1H30M",
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine",
+       "identity": [],
+       "license_type": "",
+       "location": "japaneast",
+       "max_bid_price": -1,
+       "name": "example-machine",
+       "network_interface_ids": [
+        "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2"
+       ],
+       "os_disk": [
+        {
+         "caching": "ReadWrite",
+         "diff_disk_settings": [],
+         "disk_encryption_set_id": "",
+         "disk_size_gb": 30,
+         "name": "example-machine_OsDisk_1_9f7a1581e67b4d7a88f607ae64d52019",
+         "storage_account_type": "Standard_LRS",
+         "write_accelerator_enabled": false
+        }
+       ],
+       "patch_mode": "ImageDefault",
+       "plan": [],
+       "platform_fault_domain": -1,
+       "priority": "Regular",
+       "private_ip_address": "10.0.2.5",
+       "private_ip_addresses": [
+        "10.0.2.5"
+       ],
+       "provision_vm_agent": true,
+       "proximity_placement_group_id": "",
+       "public_ip_address": "",
+       "public_ip_addresses": [],
+       "resource_group_name": "copilot-workshop-resources",
+       "secret": [],
+       "secure_boot_enabled": false,
+       "size": "Standard_F2",
+       "source_image_id": "",
+       "source_image_reference": [
+        {
+         "offer": "0001-com-ubuntu-server-jammy",
+         "publisher": "Canonical",
+         "sku": "22_04-lts",
+         "version": "latest"
+        }
+       ],
+       "tags": {},
+       "timeouts": null,
+       "user_data": "",
+       "virtual_machine_id": "a4dbd25f-0aea-4ee1-9dcc-cbe077c0cb41",
+       "virtual_machine_scale_set_id": "",
+       "vtpm_enabled": false,
+       "zone": ""
+      }
+     },
+     {
+      "address": "azurerm_network_interface.internal",
+      "depends_on": [
+       "azurerm_resource_group.main",
+       "azurerm_subnet.internal",
+       "azurerm_virtual_network.main"
+      ],
+      "mode": "managed",
+      "name": "internal",
+      "provider_name": "registry.terraform.io/hashicorp/azurerm",
+      "schema_version": 0,
+      "sensitive_values": {
+       "applied_dns_servers": [],
+       "dns_servers": [],
+       "ip_configuration": [
+        {}
+       ],
+       "private_ip_addresses": [
+        false
+       ],
+       "tags": {}
+      },
+      "type": "azurerm_network_interface",
+      "values": {
+       "applied_dns_servers": [],
+       "dns_servers": [],
+       "enable_accelerated_networking": false,
+       "enable_ip_forwarding": false,
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2",
+       "internal_dns_name_label": "",
+       "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+       "ip_configuration": [
+        {
+         "gateway_load_balancer_frontend_ip_configuration_id": "",
+         "name": "internal",
+         "primary": true,
+         "private_ip_address": "10.0.2.5",
+         "private_ip_address_allocation": "Dynamic",
+         "private_ip_address_version": "IPv4",
+         "public_ip_address_id": "",
+         "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+        }
+       ],
+       "location": "japaneast",
+       "mac_address": "00-22-48-69-19-D0",
+       "name": "copilot-workshop-nic2",
+       "private_ip_address": "10.0.2.5",
+       "private_ip_addresses": [
+        "10.0.2.5"
+       ],
+       "resource_group_name": "copilot-workshop-resources",
+       "tags": {},
+       "timeouts": null,
+       "virtual_machine_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine"
+      }
+     },
+     {
+      "address": "azurerm_network_interface.main",
+      "depends_on": [
+       "azurerm_public_ip.pip",
+       "azurerm_resource_group.main",
+       "azurerm_subnet.internal",
+       "azurerm_virtual_network.main"
+      ],
+      "mode": "managed",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/azurerm",
+      "schema_version": 0,
+      "sensitive_values": {
+       "applied_dns_servers": [],
+       "dns_servers": [],
+       "ip_configuration": [
+        {}
+       ],
+       "private_ip_addresses": [
+        false
+       ],
+       "tags": {}
+      },
+      "type": "azurerm_network_interface",
+      "values": {
+       "applied_dns_servers": [],
+       "dns_servers": [],
+       "enable_accelerated_networking": false,
+       "enable_ip_forwarding": false,
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1",
+       "internal_dns_name_label": "",
+       "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+       "ip_configuration": [
+        {
+         "gateway_load_balancer_frontend_ip_configuration_id": "",
+         "name": "primary",
+         "primary": true,
+         "private_ip_address": "10.0.2.4",
+         "private_ip_address_allocation": "Dynamic",
+         "private_ip_address_version": "IPv4",
+         "public_ip_address_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/publicIPAddresses/copilot-workshop-pip",
+         "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+        }
+       ],
+       "location": "japaneast",
+       "mac_address": "",
+       "name": "copilot-workshop-nic1",
+       "private_ip_address": "10.0.2.4",
+       "private_ip_addresses": [
+        "10.0.2.4"
+       ],
+       "resource_group_name": "copilot-workshop-resources",
+       "tags": {},
+       "timeouts": null,
+       "virtual_machine_id": ""
+      }
+     },
+     {
+      "address": "azurerm_network_interface_security_group_association.main",
+      "depends_on": [
+       "azurerm_network_interface.main",
+       "azurerm_network_security_group.main",
+       "azurerm_public_ip.pip",
+       "azurerm_resource_group.main",
+       "azurerm_subnet.internal",
+       "azurerm_virtual_network.main"
+      ],
+      "mode": "managed",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/azurerm",
+      "schema_version": 0,
+      "sensitive_values": {},
+      "type": "azurerm_network_interface_security_group_association",
+      "values": {
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1|/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+       "network_interface_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1",
+       "network_security_group_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+       "timeouts": null
+      }
+     },
+     {
+      "address": "azurerm_network_security_group.main",
+      "depends_on": [
+       "azurerm_resource_group.main"
+      ],
+      "mode": "managed",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/azurerm",
+      "schema_version": 0,
+      "sensitive_values": {
+       "security_rule": [
+        {
+         "destination_address_prefixes": [],
+         "destination_application_security_group_ids": [],
+         "destination_port_ranges": [],
+         "source_address_prefixes": [],
+         "source_application_security_group_ids": [],
+         "source_port_ranges": []
+        },
+        {
+         "destination_address_prefixes": [],
+         "destination_application_security_group_ids": [],
+         "destination_port_ranges": [],
+         "source_address_prefixes": [],
+         "source_application_security_group_ids": [],
+         "source_port_ranges": []
+        }
+       ],
+       "tags": {}
+      },
+      "type": "azurerm_network_security_group",
+      "values": {
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+       "location": "japaneast",
+       "name": "copilot-workshop-nsg",
+       "resource_group_name": "copilot-workshop-resources",
+       "security_rule": [
+        {
+         "access": "Allow",
+         "description": "",
+         "destination_address_prefix": "*",
+         "destination_address_prefixes": [],
+         "destination_application_security_group_ids": [],
+         "destination_port_range": "22",
+         "destination_port_ranges": [],
+         "direction": "Inbound",
+         "name": "SSH",
+         "priority": 1001,
+         "protocol": "Tcp",
+         "source_address_prefix": "*",
+         "source_address_prefixes": [],
+         "source_application_security_group_ids": [],
+         "source_port_range": "*",
+         "source_port_ranges": []
+        },
+        {
+         "access": "Allow",
+         "description": "",
+         "destination_address_prefix": "*",
+         "destination_address_prefixes": [],
+         "destination_application_security_group_ids": [],
+         "destination_port_range": "80",
+         "destination_port_ranges": [],
+         "direction": "Inbound",
+         "name": "web",
+         "priority": 1002,
+         "protocol": "Tcp",
+         "source_address_prefix": "*",
+         "source_address_prefixes": [],
+         "source_application_security_group_ids": [],
+         "source_port_range": "*",
+         "source_port_ranges": []
+        }
+       ],
+       "tags": {},
+       "timeouts": null
+      }
+     },
+     {
+      "address": "azurerm_public_ip.pip",
+      "depends_on": [
+       "azurerm_resource_group.main"
+      ],
+      "mode": "managed",
+      "name": "pip",
+      "provider_name": "registry.terraform.io/hashicorp/azurerm",
+      "schema_version": 0,
+      "sensitive_values": {
+       "ip_tags": {},
+       "tags": {},
+       "zones": []
+      },
+      "type": "azurerm_public_ip",
+      "values": {
+       "allocation_method": "Dynamic",
+       "availability_zone": "No-Zone",
+       "domain_name_label": null,
+       "fqdn": null,
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/publicIPAddresses/copilot-workshop-pip",
+       "idle_timeout_in_minutes": 4,
+       "ip_address": "",
+       "ip_tags": {},
+       "ip_version": "IPv4",
+       "location": "japaneast",
+       "name": "copilot-workshop-pip",
+       "public_ip_prefix_id": null,
+       "resource_group_name": "copilot-workshop-resources",
+       "reverse_fqdn": null,
+       "sku": "Basic",
+       "sku_tier": "Regional",
+       "tags": {},
+       "timeouts": null,
+       "zones": []
+      }
+     },
+     {
+      "address": "azurerm_resource_group.main",
+      "mode": "managed",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/azurerm",
+      "schema_version": 0,
+      "sensitive_values": {
+       "tags": {}
+      },
+      "type": "azurerm_resource_group",
+      "values": {
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources",
+       "location": "japaneast",
+       "name": "copilot-workshop-resources",
+       "tags": {},
+       "timeouts": null
+      }
+     },
+     {
+      "address": "azurerm_subnet.internal",
+      "depends_on": [
+       "azurerm_resource_group.main",
+       "azurerm_virtual_network.main"
+      ],
+      "mode": "managed",
+      "name": "internal",
+      "provider_name": "registry.terraform.io/hashicorp/azurerm",
+      "schema_version": 0,
+      "sensitive_values": {
+       "address_prefixes": [
+        false
+       ],
+       "delegation": [],
+       "service_endpoint_policy_ids": [],
+       "service_endpoints": []
+      },
+      "type": "azurerm_subnet",
+      "values": {
+       "address_prefix": "10.0.2.0/24",
+       "address_prefixes": [
+        "10.0.2.0/24"
+       ],
+       "delegation": [],
+       "enforce_private_link_endpoint_network_policies": false,
+       "enforce_private_link_service_network_policies": false,
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal",
+       "name": "internal",
+       "resource_group_name": "copilot-workshop-resources",
+       "service_endpoint_policy_ids": [],
+       "service_endpoints": [],
+       "timeouts": null,
+       "virtual_network_name": "copilot-workshop-network"
+      }
+     },
+     {
+      "address": "azurerm_virtual_network.main",
+      "depends_on": [
+       "azurerm_resource_group.main"
+      ],
+      "mode": "managed",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/azurerm",
+      "schema_version": 0,
+      "sensitive_values": {
+       "address_space": [
+        false
+       ],
+       "ddos_protection_plan": [],
+       "dns_servers": [],
+       "subnet": [
+        {}
+       ],
+       "tags": {}
+      },
+      "type": "azurerm_virtual_network",
+      "values": {
+       "address_space": [
+        "10.0.0.0/16"
+       ],
+       "bgp_community": "",
+       "ddos_protection_plan": [],
+       "dns_servers": [],
+       "flow_timeout_in_minutes": 0,
+       "guid": "e86c3f80-c338-40fe-8e07-12a88b9adb0e",
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network",
+       "location": "japaneast",
+       "name": "copilot-workshop-network",
+       "resource_group_name": "copilot-workshop-resources",
+       "subnet": [
+        {
+         "address_prefix": "10.0.2.0/24",
+         "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal",
+         "name": "internal",
+         "security_group": ""
+        }
+       ],
+       "tags": {},
+       "timeouts": null,
+       "vm_protection_enabled": false
+      }
+     },
+     {
+      "address": "random_pet.ssh_key_name",
+      "mode": "managed",
+      "name": "ssh_key_name",
+      "provider_name": "registry.terraform.io/hashicorp/random",
+      "schema_version": 0,
+      "sensitive_values": {},
+      "type": "random_pet",
+      "values": {
+       "id": "sshbettergrackle",
+       "keepers": null,
+       "length": 2,
+       "prefix": "ssh",
+       "separator": ""
+      }
+     }
+    ]
+   }
+  }
+ },
+ "resource_changes": [
+  {
+   "address": "azapi_resource.ssh_public_key",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "body": "{}",
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle",
+     "identity": [],
+     "ignore_body_changes": null,
+     "ignore_casing": false,
+     "ignore_missing_property": true,
+     "location": "japaneast",
+     "locks": null,
+     "name": "sshbettergrackle",
+     "output": "{}",
+     "parent_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources",
+     "removing_special_chars": false,
+     "response_export_values": null,
+     "schema_validation_enabled": true,
+     "tags": {},
+     "timeouts": null,
+     "type": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+    },
+    "after_sensitive": {
+     "identity": [],
+     "tags": {}
+    },
+    "after_unknown": {},
+    "before": {
+     "body": "{}",
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle",
+     "identity": [],
+     "ignore_body_changes": null,
+     "ignore_casing": false,
+     "ignore_missing_property": true,
+     "location": "japaneast",
+     "locks": null,
+     "name": "sshbettergrackle",
+     "output": "{}",
+     "parent_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources",
+     "removing_special_chars": false,
+     "response_export_values": null,
+     "schema_validation_enabled": true,
+     "tags": {},
+     "timeouts": null,
+     "type": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+    },
+    "before_sensitive": {
+     "identity": [],
+     "tags": {}
+    }
+   },
+   "mode": "managed",
+   "name": "ssh_public_key",
+   "provider_name": "registry.terraform.io/azure/azapi",
+   "type": "azapi_resource"
+  },
+  {
+   "address": "azapi_resource_action.ssh_public_key_gen",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "action": "generateKeyPair",
+     "body": null,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle/generateKeyPair",
+     "locks": null,
+     "method": "POST",
+     "output": "{\"privateKey\":\"-----BEGIN RSA PRIVATE KEY-----\\r\\nMIIG5AIBAAKCAYEAqKm8pVkyyOM/53NW6dBkZYhYvgD4i7hnxZdLm1HFYG6Ncj7K\\r\\n3iGp9yeP6UiuXAFhqFSH0Hm3bgoZvOIFulWwsySdRXWddDew3Zq79hSj2hzXQlIV\\r\\nDDCRxUZKF4kEe70sh4AP/L4918QHiiqfHu2YoZmNvJYS18GfKZMvRhMj2tkIOC6x\\r\\ndUtwsRcd4LW7OHHfQ8M3C7B/LSCumnhqq6WoD+e5cUNdA5uDL/I1qrCmA7KI4Lqq\\r\\nWbRNwjM/UhmQG09wBtdfSi/AVZ89HY4s7CPjSAsvjGwW6I342c/uyLrXIqacGrQP\\r\\nzWb4UF9CIBzWbFWU5gQ2GPpwBUL3/GUgOXV9LHtVZvX1W7DNMH3PrG0/VXqlO4Ri\\r\\n3gUQCPtuhrwNlRxIwj0CniWdtu7Cp+Uyr92hRkcfgCSndhIp3FMCgVduq+phcDpa\\r\\nwVSIncAPkrydFU3m2frz1lVTRNlDjjak58kiNlJTGam4aOmF+1CMMLIsYh42o4xc\\r\\nNUFXS4id9yFO5Q6VAgMBAAECggGAbDZ7EptoOfuTxKv714gc4gfY6A83aG2oJt4r\\r\\nZDvSp0xG9EXVYy+2HR0E+Gfpdp5sSdPyT4/IYJGacdWSVzsjY8zaGvabTzVsBMKC\\r\\nViBoAEkA00xWtLt0y12NrAv9FGcLauR/XWmxw/3B2KP/85f9lbEvfw/KhyNzOvl0\\r\\nG0Gsf31ACMvsj5UXeIecY9A1jsGAvblCV/2lmw6c9/7KcdaXPZ0vHbxasTXVta1x\\r\\nQVKVMUobCBS7t1I3kaHPvp0oGF2eN1PE5cgHCSdmiISKl/NSrqeGwKxrY7juORM/\\r\\nilkur8hvvHvdzkFhBANibXwmPEcNKvStjdlXareP0j6H63FS0uFvmLEYpWtY7ur+\\r\\nA5zeXpC8jUv6h6Lbu8ynAFbj460/vCEZ8I93gSdX6TB0E/SjTP9f782VaxKbvz4K\\r\\nbmx/OMqvsY2QN7VcOKAyLgLzU6zZjkWOy3u6lkxRjq6CECwrCN1VGd5llRx/1Jwe\\r\\ncqQJyYQnjWiNVL21y5HWHgw/3+MBAoHBAMBE+TVGO7/p3P6FvAb+Pfb2vBsUQ1xB\\r\\nxWquJsSX39XdczKLGe9+e2G7uVeBEyb6th4ttLDLB/6nuV+eShOSgNC24empMnOO\\r\\njaeUhCN2KOlpbUzte8/FdaSGg1I7Soqda4sraNwcw0CGyJpAGaguxX8KymioDzWS\\r\\n6rYUVYvn6BdKc+LkC9NF5wyOgqHAWTRbFpy52fDvqESSA0dD4SConPWL5ZRgEvFM\\r\\n00jOtRYatkC8mHArsHJk1lnGOhwe5Ww4kwKBwQDgkaR3BngC6ttZN9ynmFU7S3TB\\r\\nsGX1SDH18R66V5x0+UjUBbtbk0GsLTyBHckpagJS7oO6v71VnTngfQiMBB3Xv17f\\r\\nrqcaw5LCjjuqT7iLV5R8Xr7NYzxM1PNPAxLzyqFYxLSJSIMUao09hVuiIEzETAjS\\r\\noZRmcGYBdfJvc4ixAkNMSEUoFL6CzF7gS/C+2mE3/9pHhlySWuFthfNSutnfs4rM\\r\\nR7OSGHqtqUYQchOpSMVyyuHwYhbnMTw1lq+63TcCgcA8v85J0eYhDiBgXxr4zq3/\\r\\ncRggKjfaV4Gr4lindyEnLrAuQRsxu7H6QFkgV80YXNDcGi7kSVI+WPpORvI62uhO\\r\\nieo5bNdfAaSqVVem6LemgEQjsUmUbVxtXn7xpYA46eJH97BLE99xbOTHMAerRxPp\\r\\nvxwTEz6y+7ejTit1aBHCAik5gDpoR8boBcMqnl7RFxK+9E3zPZXaDJRymPTx37Sw\\r\\nNMKWLgDuMwrzDzTSRiBdtfkoP/WhP1EmzmYf6ncsyXcCgcEAoqL30DfAHKTIXPHm\\r\\n/P2G5J1+HnRJMv2pKSwKC/w9VD3hr6PDD8wy6KYORpgywqqCqlsQzePlFCb87oa+\\r\\n9OBaWJDA/hA391siY4Ks1WhNB6VS5UuctZSj7CThXRyl0iey+F3lPfNk8xlD1wVI\\r\\n2r63ugYy8ZCRsCrAxVgNTwgGO+Oep5VDeIalfobSQ3DcFuyDMhI6nEhDrL7iufYj\\r\\nxYuLFMarw8w90ZWm6zRHiMuFT7ljPgKO5Q+09JSkvU63UAa7AoHBAJ8RLrkThDEq\\r\\nFsZQ27Ul49mjFwLBjDtala3z/UzXjXF302vAgk49X4m2r8oFbx1UpleB7ZMWqQvX\\r\\nBQznJ0ylpuvoA5Plb0mz5riicOWZBpUWgdvbKNqEhR5drsXlxS4++0xQXbsS+Ex8\\r\\na/75jKV3hJ4UocXHf0Wwj5f4PzKyfBA12ssdR3D98UE11KRrLfyh8fJMEGnirsF2\\r\\n3yvfy7KVT7ng3RiaRuhmVdm3Xc4p8qj9tK6V/tSL3C9ifDetjBBTPw==\\r\\n-----END RSA PRIVATE KEY-----\\r\\n\",\"publicKey\":\"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure\"}",
+     "resource_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle",
+     "response_export_values": [
+      "publicKey",
+      "privateKey"
+     ],
+     "timeouts": null,
+     "type": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+    },
+    "after_sensitive": {
+     "response_export_values": [
+      false,
+      false
+     ]
+    },
+    "after_unknown": {},
+    "before": {
+     "action": "generateKeyPair",
+     "body": null,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle/generateKeyPair",
+     "locks": null,
+     "method": "POST",
+     "output": "{\"privateKey\":\"-----BEGIN RSA PRIVATE KEY-----\\r\\n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\\r\\n-----END RSA PRIVATE KEY-----\\r\\n\",\"publicKey\":\"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure\"}",
+     "resource_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/sshPublicKeys/sshbettergrackle",
+     "response_export_values": [
+      "publicKey",
+      "privateKey"
+     ],
+     "timeouts": null,
+     "type": "Microsoft.Compute/sshPublicKeys@2022-11-01"
+    },
+    "before_sensitive": {
+     "response_export_values": [
+      false,
+      false
+     ]
+    }
+   },
+   "mode": "managed",
+   "name": "ssh_public_key_gen",
+   "provider_name": "registry.terraform.io/azure/azapi",
+   "type": "azapi_resource_action"
+  },
+  {
+   "address": "azurerm_linux_virtual_machine.example",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "additional_capabilities": [],
+     "admin_password": null,
+     "admin_ssh_key": [
+      {
+       "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure",
+       "username": "adminuser"
+      }
+     ],
+     "admin_username": "adminuser",
+     "allow_extension_operations": true,
+     "availability_set_id": "",
+     "boot_diagnostics": [],
+     "computer_name": "example-machine",
+     "custom_data": null,
+     "dedicated_host_group_id": "",
+     "dedicated_host_id": "",
+     "disable_password_authentication": true,
+     "encryption_at_host_enabled": false,
+     "eviction_policy": "",
+     "extensions_time_budget": "PT1H30M",
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine",
+     "identity": [],
+     "license_type": "",
+     "location": "japaneast",
+     "max_bid_price": -1,
+     "name": "example-machine",
+     "network_interface_ids": [
+      "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2"
+     ],
+     "os_disk": [
+      {
+       "caching": "ReadWrite",
+       "diff_disk_settings": [],
+       "disk_encryption_set_id": "",
+       "disk_size_gb": 30,
+       "name": "example-machine_OsDisk_1_9f7a1581e67b4d7a88f607ae64d52019",
+       "storage_account_type": "Standard_LRS",
+       "write_accelerator_enabled": false
+      }
+     ],
+     "patch_mode": "ImageDefault",
+     "plan": [],
+     "platform_fault_domain": -1,
+     "priority": "Regular",
+     "private_ip_address": "10.0.2.5",
+     "private_ip_addresses": [
+      "10.0.2.5"
+     ],
+     "provision_vm_agent": true,
+     "proximity_placement_group_id": "",
+     "public_ip_address": "",
+     "public_ip_addresses": [],
+     "resource_group_name": "copilot-workshop-resources",
+     "secret": [],
+     "secure_boot_enabled": false,
+     "size": "Standard_F2",
+     "source_image_id": "",
+     "source_image_reference": [
+      {
+       "offer": "0001-com-ubuntu-server-jammy",
+       "publisher": "Canonical",
+       "sku": "22_04-lts",
+       "version": "latest"
+      }
+     ],
+     "tags": {},
+     "timeouts": null,
+     "user_data": "",
+     "virtual_machine_id": "a4dbd25f-0aea-4ee1-9dcc-cbe077c0cb41",
+     "virtual_machine_scale_set_id": "",
+     "vtpm_enabled": false,
+     "zone": ""
+    },
+    "after_sensitive": {
+     "additional_capabilities": [],
+     "admin_password": true,
+     "admin_ssh_key": [
+      {}
+     ],
+     "boot_diagnostics": [],
+     "custom_data": true,
+     "identity": [],
+     "network_interface_ids": [
+      false
+     ],
+     "os_disk": [
+      {
+       "diff_disk_settings": []
+      }
+     ],
+     "plan": [],
+     "private_ip_addresses": [
+      false
+     ],
+     "public_ip_addresses": [],
+     "secret": [],
+     "source_image_reference": [
+      {}
+     ],
+     "tags": {}
+    },
+    "after_unknown": {},
+    "before": {
+     "additional_capabilities": [],
+     "admin_password": null,
+     "admin_ssh_key": [
+      {
+       "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure",
+       "username": "adminuser"
+      }
+     ],
+     "admin_username": "adminuser",
+     "allow_extension_operations": true,
+     "availability_set_id": "",
+     "boot_diagnostics": [],
+     "computer_name": "example-machine",
+     "custom_data": null,
+     "dedicated_host_group_id": "",
+     "dedicated_host_id": "",
+     "disable_password_authentication": true,
+     "encryption_at_host_enabled": false,
+     "eviction_policy": "",
+     "extensions_time_budget": "PT1H30M",
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine",
+     "identity": [],
+     "license_type": "",
+     "location": "japaneast",
+     "max_bid_price": -1,
+     "name": "example-machine",
+     "network_interface_ids": [
+      "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2"
+     ],
+     "os_disk": [
+      {
+       "caching": "ReadWrite",
+       "diff_disk_settings": [],
+       "disk_encryption_set_id": "",
+       "disk_size_gb": 30,
+       "name": "example-machine_OsDisk_1_9f7a1581e67b4d7a88f607ae64d52019",
+       "storage_account_type": "Standard_LRS",
+       "write_accelerator_enabled": false
+      }
+     ],
+     "patch_mode": "ImageDefault",
+     "plan": [],
+     "platform_fault_domain": -1,
+     "priority": "Regular",
+     "private_ip_address": "10.0.2.5",
+     "private_ip_addresses": [
+      "10.0.2.5"
+     ],
+     "provision_vm_agent": true,
+     "proximity_placement_group_id": "",
+     "public_ip_address": "",
+     "public_ip_addresses": [],
+     "resource_group_name": "copilot-workshop-resources",
+     "secret": [],
+     "secure_boot_enabled": false,
+     "size": "Standard_F2",
+     "source_image_id": "",
+     "source_image_reference": [
+      {
+       "offer": "0001-com-ubuntu-server-jammy",
+       "publisher": "Canonical",
+       "sku": "22_04-lts",
+       "version": "latest"
+      }
+     ],
+     "tags": {},
+     "timeouts": null,
+     "user_data": "",
+     "virtual_machine_id": "a4dbd25f-0aea-4ee1-9dcc-cbe077c0cb41",
+     "virtual_machine_scale_set_id": "",
+     "vtpm_enabled": false,
+     "zone": ""
+    },
+    "before_sensitive": {
+     "additional_capabilities": [],
+     "admin_password": true,
+     "admin_ssh_key": [
+      {}
+     ],
+     "boot_diagnostics": [],
+     "custom_data": true,
+     "identity": [],
+     "network_interface_ids": [
+      false
+     ],
+     "os_disk": [
+      {
+       "diff_disk_settings": []
+      }
+     ],
+     "plan": [],
+     "private_ip_addresses": [
+      false
+     ],
+     "public_ip_addresses": [],
+     "secret": [],
+     "source_image_reference": [
+      {}
+     ],
+     "tags": {}
+    }
+   },
+   "mode": "managed",
+   "name": "example",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_linux_virtual_machine"
+  },
+  {
+   "address": "azurerm_network_interface.internal",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "enable_accelerated_networking": false,
+     "enable_ip_forwarding": false,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2",
+     "internal_dns_name_label": "",
+     "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+     "ip_configuration": [
+      {
+       "gateway_load_balancer_frontend_ip_configuration_id": "",
+       "name": "internal",
+       "primary": true,
+       "private_ip_address": "10.0.2.5",
+       "private_ip_address_allocation": "Dynamic",
+       "private_ip_address_version": "IPv4",
+       "public_ip_address_id": "",
+       "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+      }
+     ],
+     "location": "japaneast",
+     "mac_address": "00-22-48-69-19-D0",
+     "name": "copilot-workshop-nic2",
+     "private_ip_address": "10.0.2.5",
+     "private_ip_addresses": [
+      "10.0.2.5"
+     ],
+     "resource_group_name": "copilot-workshop-resources",
+     "tags": {},
+     "timeouts": null,
+     "virtual_machine_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine"
+    },
+    "after_sensitive": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "ip_configuration": [
+      {}
+     ],
+     "private_ip_addresses": [
+      false
+     ],
+     "tags": {}
+    },
+    "after_unknown": {},
+    "before": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "enable_accelerated_networking": false,
+     "enable_ip_forwarding": false,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2",
+     "internal_dns_name_label": "",
+     "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+     "ip_configuration": [
+      {
+       "gateway_load_balancer_frontend_ip_configuration_id": "",
+       "name": "internal",
+       "primary": true,
+       "private_ip_address": "10.0.2.5",
+       "private_ip_address_allocation": "Dynamic",
+       "private_ip_address_version": "IPv4",
+       "public_ip_address_id": "",
+       "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+      }
+     ],
+     "location": "japaneast",
+     "mac_address": "00-22-48-69-19-D0",
+     "name": "copilot-workshop-nic2",
+     "private_ip_address": "10.0.2.5",
+     "private_ip_addresses": [
+      "10.0.2.5"
+     ],
+     "resource_group_name": "copilot-workshop-resources",
+     "tags": {},
+     "timeouts": null,
+     "virtual_machine_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine"
+    },
+    "before_sensitive": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "ip_configuration": [
+      {}
+     ],
+     "private_ip_addresses": [
+      false
+     ],
+     "tags": {}
+    }
+   },
+   "mode": "managed",
+   "name": "internal",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_network_interface"
+  },
+  {
+   "address": "azurerm_network_interface.main",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "enable_accelerated_networking": false,
+     "enable_ip_forwarding": false,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1",
+     "internal_dns_name_label": "",
+     "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+     "ip_configuration": [
+      {
+       "gateway_load_balancer_frontend_ip_configuration_id": "",
+       "name": "primary",
+       "primary": true,
+       "private_ip_address": "10.0.2.4",
+       "private_ip_address_allocation": "Dynamic",
+       "private_ip_address_version": "IPv4",
+       "public_ip_address_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/publicIPAddresses/copilot-workshop-pip",
+       "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+      }
+     ],
+     "location": "japaneast",
+     "mac_address": "",
+     "name": "copilot-workshop-nic1",
+     "private_ip_address": "10.0.2.4",
+     "private_ip_addresses": [
+      "10.0.2.4"
+     ],
+     "resource_group_name": "copilot-workshop-resources",
+     "tags": {},
+     "timeouts": null,
+     "virtual_machine_id": ""
+    },
+    "after_sensitive": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "ip_configuration": [
+      {}
+     ],
+     "private_ip_addresses": [
+      false
+     ],
+     "tags": {}
+    },
+    "after_unknown": {},
+    "before": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "enable_accelerated_networking": false,
+     "enable_ip_forwarding": false,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1",
+     "internal_dns_name_label": "",
+     "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+     "ip_configuration": [
+      {
+       "gateway_load_balancer_frontend_ip_configuration_id": "",
+       "name": "primary",
+       "primary": true,
+       "private_ip_address": "10.0.2.4",
+       "private_ip_address_allocation": "Dynamic",
+       "private_ip_address_version": "IPv4",
+       "public_ip_address_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/publicIPAddresses/copilot-workshop-pip",
+       "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+      }
+     ],
+     "location": "japaneast",
+     "mac_address": "",
+     "name": "copilot-workshop-nic1",
+     "private_ip_address": "10.0.2.4",
+     "private_ip_addresses": [
+      "10.0.2.4"
+     ],
+     "resource_group_name": "copilot-workshop-resources",
+     "tags": {},
+     "timeouts": null,
+     "virtual_machine_id": ""
+    },
+    "before_sensitive": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "ip_configuration": [
+      {}
+     ],
+     "private_ip_addresses": [
+      false
+     ],
+     "tags": {}
+    }
+   },
+   "mode": "managed",
+   "name": "main",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_network_interface"
+  },
+  {
+   "address": "azurerm_network_interface_security_group_association.main",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1|/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+     "network_interface_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1",
+     "network_security_group_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+     "timeouts": null
+    },
+    "after_sensitive": {},
+    "after_unknown": {},
+    "before": {
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1|/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+     "network_interface_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic1",
+     "network_security_group_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+     "timeouts": null
+    },
+    "before_sensitive": {}
+   },
+   "mode": "managed",
+   "name": "main",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_network_interface_security_group_association"
+  },
+  {
+   "address": "azurerm_network_security_group.main",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+     "location": "japaneast",
+     "name": "copilot-workshop-nsg",
+     "resource_group_name": "copilot-workshop-resources",
+     "security_rule": [
+      {
+       "access": "Allow",
+       "description": "",
+       "destination_address_prefix": "*",
+       "destination_address_prefixes": [],
+       "destination_application_security_group_ids": [],
+       "destination_port_range": "22",
+       "destination_port_ranges": [],
+       "direction": "Inbound",
+       "name": "SSH",
+       "priority": 1001,
+       "protocol": "Tcp",
+       "source_address_prefix": "*",
+       "source_address_prefixes": [],
+       "source_application_security_group_ids": [],
+       "source_port_range": "*",
+       "source_port_ranges": []
+      },
+      {
+       "access": "Allow",
+       "description": "",
+       "destination_address_prefix": "*",
+       "destination_address_prefixes": [],
+       "destination_application_security_group_ids": [],
+       "destination_port_range": "80",
+       "destination_port_ranges": [],
+       "direction": "Inbound",
+       "name": "web",
+       "priority": 1002,
+       "protocol": "Tcp",
+       "source_address_prefix": "*",
+       "source_address_prefixes": [],
+       "source_application_security_group_ids": [],
+       "source_port_range": "*",
+       "source_port_ranges": []
+      }
+     ],
+     "tags": {},
+     "timeouts": null
+    },
+    "after_sensitive": {
+     "security_rule": [
+      {
+       "destination_address_prefixes": [],
+       "destination_application_security_group_ids": [],
+       "destination_port_ranges": [],
+       "source_address_prefixes": [],
+       "source_application_security_group_ids": [],
+       "source_port_ranges": []
+      },
+      {
+       "destination_address_prefixes": [],
+       "destination_application_security_group_ids": [],
+       "destination_port_ranges": [],
+       "source_address_prefixes": [],
+       "source_application_security_group_ids": [],
+       "source_port_ranges": []
+      }
+     ],
+     "tags": {}
+    },
+    "after_unknown": {},
+    "before": {
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkSecurityGroups/copilot-workshop-nsg",
+     "location": "japaneast",
+     "name": "copilot-workshop-nsg",
+     "resource_group_name": "copilot-workshop-resources",
+     "security_rule": [
+      {
+       "access": "Allow",
+       "description": "",
+       "destination_address_prefix": "*",
+       "destination_address_prefixes": [],
+       "destination_application_security_group_ids": [],
+       "destination_port_range": "22",
+       "destination_port_ranges": [],
+       "direction": "Inbound",
+       "name": "SSH",
+       "priority": 1001,
+       "protocol": "Tcp",
+       "source_address_prefix": "*",
+       "source_address_prefixes": [],
+       "source_application_security_group_ids": [],
+       "source_port_range": "*",
+       "source_port_ranges": []
+      },
+      {
+       "access": "Allow",
+       "description": "",
+       "destination_address_prefix": "*",
+       "destination_address_prefixes": [],
+       "destination_application_security_group_ids": [],
+       "destination_port_range": "80",
+       "destination_port_ranges": [],
+       "direction": "Inbound",
+       "name": "web",
+       "priority": 1002,
+       "protocol": "Tcp",
+       "source_address_prefix": "*",
+       "source_address_prefixes": [],
+       "source_application_security_group_ids": [],
+       "source_port_range": "*",
+       "source_port_ranges": []
+      }
+     ],
+     "tags": {},
+     "timeouts": null
+    },
+    "before_sensitive": {
+     "security_rule": [
+      {
+       "destination_address_prefixes": [],
+       "destination_application_security_group_ids": [],
+       "destination_port_ranges": [],
+       "source_address_prefixes": [],
+       "source_application_security_group_ids": [],
+       "source_port_ranges": []
+      },
+      {
+       "destination_address_prefixes": [],
+       "destination_application_security_group_ids": [],
+       "destination_port_ranges": [],
+       "source_address_prefixes": [],
+       "source_application_security_group_ids": [],
+       "source_port_ranges": []
+      }
+     ],
+     "tags": {}
+    }
+   },
+   "mode": "managed",
+   "name": "main",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_network_security_group"
+  },
+  {
+   "address": "azurerm_public_ip.pip",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "allocation_method": "Dynamic",
+     "availability_zone": "No-Zone",
+     "domain_name_label": null,
+     "fqdn": null,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/publicIPAddresses/copilot-workshop-pip",
+     "idle_timeout_in_minutes": 4,
+     "ip_address": "",
+     "ip_tags": {},
+     "ip_version": "IPv4",
+     "location": "japaneast",
+     "name": "copilot-workshop-pip",
+     "public_ip_prefix_id": null,
+     "resource_group_name": "copilot-workshop-resources",
+     "reverse_fqdn": null,
+     "sku": "Basic",
+     "sku_tier": "Regional",
+     "tags": {},
+     "timeouts": null,
+     "zones": []
+    },
+    "after_sensitive": {
+     "ip_tags": {},
+     "tags": {},
+     "zones": []
+    },
+    "after_unknown": {},
+    "before": {
+     "allocation_method": "Dynamic",
+     "availability_zone": "No-Zone",
+     "domain_name_label": null,
+     "fqdn": null,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/publicIPAddresses/copilot-workshop-pip",
+     "idle_timeout_in_minutes": 4,
+     "ip_address": "",
+     "ip_tags": {},
+     "ip_version": "IPv4",
+     "location": "japaneast",
+     "name": "copilot-workshop-pip",
+     "public_ip_prefix_id": null,
+     "resource_group_name": "copilot-workshop-resources",
+     "reverse_fqdn": null,
+     "sku": "Basic",
+     "sku_tier": "Regional",
+     "tags": {},
+     "timeouts": null,
+     "zones": []
+    },
+    "before_sensitive": {
+     "ip_tags": {},
+     "tags": {},
+     "zones": []
+    }
+   },
+   "mode": "managed",
+   "name": "pip",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_public_ip"
+  },
+  {
+   "address": "azurerm_resource_group.main",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources",
+     "location": "japaneast",
+     "name": "copilot-workshop-resources",
+     "tags": {},
+     "timeouts": null
+    },
+    "after_sensitive": {
+     "tags": {}
+    },
+    "after_unknown": {},
+    "before": {
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources",
+     "location": "japaneast",
+     "name": "copilot-workshop-resources",
+     "tags": {},
+     "timeouts": null
+    },
+    "before_sensitive": {
+     "tags": {}
+    }
+   },
+   "mode": "managed",
+   "name": "main",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_resource_group"
+  },
+  {
+   "address": "azurerm_subnet.internal",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "address_prefix": "10.0.2.0/24",
+     "address_prefixes": [
+      "10.0.2.0/24"
+     ],
+     "delegation": [],
+     "enforce_private_link_endpoint_network_policies": false,
+     "enforce_private_link_service_network_policies": false,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal",
+     "name": "internal",
+     "resource_group_name": "copilot-workshop-resources",
+     "service_endpoint_policy_ids": [],
+     "service_endpoints": [],
+     "timeouts": null,
+     "virtual_network_name": "copilot-workshop-network"
+    },
+    "after_sensitive": {
+     "address_prefixes": [
+      false
+     ],
+     "delegation": [],
+     "service_endpoint_policy_ids": [],
+     "service_endpoints": []
+    },
+    "after_unknown": {},
+    "before": {
+     "address_prefix": "10.0.2.0/24",
+     "address_prefixes": [
+      "10.0.2.0/24"
+     ],
+     "delegation": [],
+     "enforce_private_link_endpoint_network_policies": false,
+     "enforce_private_link_service_network_policies": false,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal",
+     "name": "internal",
+     "resource_group_name": "copilot-workshop-resources",
+     "service_endpoint_policy_ids": [],
+     "service_endpoints": [],
+     "timeouts": null,
+     "virtual_network_name": "copilot-workshop-network"
+    },
+    "before_sensitive": {
+     "address_prefixes": [
+      false
+     ],
+     "delegation": [],
+     "service_endpoint_policy_ids": [],
+     "service_endpoints": []
+    }
+   },
+   "mode": "managed",
+   "name": "internal",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_subnet"
+  },
+  {
+   "address": "azurerm_virtual_network.main",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "address_space": [
+      "10.0.0.0/16"
+     ],
+     "bgp_community": "",
+     "ddos_protection_plan": [],
+     "dns_servers": [],
+     "flow_timeout_in_minutes": 0,
+     "guid": "e86c3f80-c338-40fe-8e07-12a88b9adb0e",
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network",
+     "location": "japaneast",
+     "name": "copilot-workshop-network",
+     "resource_group_name": "copilot-workshop-resources",
+     "subnet": [
+      {
+       "address_prefix": "10.0.2.0/24",
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal",
+       "name": "internal",
+       "security_group": ""
+      }
+     ],
+     "tags": {},
+     "timeouts": null,
+     "vm_protection_enabled": false
+    },
+    "after_sensitive": {
+     "address_space": [
+      false
+     ],
+     "ddos_protection_plan": [],
+     "dns_servers": [],
+     "subnet": [
+      {}
+     ],
+     "tags": {}
+    },
+    "after_unknown": {},
+    "before": {
+     "address_space": [
+      "10.0.0.0/16"
+     ],
+     "bgp_community": "",
+     "ddos_protection_plan": [],
+     "dns_servers": [],
+     "flow_timeout_in_minutes": 0,
+     "guid": "e86c3f80-c338-40fe-8e07-12a88b9adb0e",
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network",
+     "location": "japaneast",
+     "name": "copilot-workshop-network",
+     "resource_group_name": "copilot-workshop-resources",
+     "subnet": [
+      {
+       "address_prefix": "10.0.2.0/24",
+       "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal",
+       "name": "internal",
+       "security_group": ""
+      }
+     ],
+     "tags": {},
+     "timeouts": null,
+     "vm_protection_enabled": false
+    },
+    "before_sensitive": {
+     "address_space": [
+      false
+     ],
+     "ddos_protection_plan": [],
+     "dns_servers": [],
+     "subnet": [
+      {}
+     ],
+     "tags": {}
+    }
+   },
+   "mode": "managed",
+   "name": "main",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_virtual_network"
+  },
+  {
+   "address": "random_pet.ssh_key_name",
+   "change": {
+    "actions": [
+     "no-op"
+    ],
+    "after": {
+     "id": "sshbettergrackle",
+     "keepers": null,
+     "length": 2,
+     "prefix": "ssh",
+     "separator": ""
+    },
+    "after_sensitive": {},
+    "after_unknown": {},
+    "before": {
+     "id": "sshbettergrackle",
+     "keepers": null,
+     "length": 2,
+     "prefix": "ssh",
+     "separator": ""
+    },
+    "before_sensitive": {}
+   },
+   "mode": "managed",
+   "name": "ssh_key_name",
+   "provider_name": "registry.terraform.io/hashicorp/random",
+   "type": "random_pet"
+  }
+ ],
+ "resource_drift": [
+  {
+   "address": "azurerm_linux_virtual_machine.example",
+   "change": {
+    "actions": [
+     "update"
+    ],
+    "after": {
+     "additional_capabilities": [],
+     "admin_password": null,
+     "admin_ssh_key": [
+      {
+       "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure",
+       "username": "adminuser"
+      }
+     ],
+     "admin_username": "adminuser",
+     "allow_extension_operations": true,
+     "availability_set_id": "",
+     "boot_diagnostics": [],
+     "computer_name": "example-machine",
+     "custom_data": null,
+     "dedicated_host_group_id": "",
+     "dedicated_host_id": "",
+     "disable_password_authentication": true,
+     "encryption_at_host_enabled": false,
+     "eviction_policy": "",
+     "extensions_time_budget": "PT1H30M",
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine",
+     "identity": [],
+     "license_type": "",
+     "location": "japaneast",
+     "max_bid_price": -1,
+     "name": "example-machine",
+     "network_interface_ids": [
+      "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2"
+     ],
+     "os_disk": [
+      {
+       "caching": "ReadWrite",
+       "diff_disk_settings": [],
+       "disk_encryption_set_id": "",
+       "disk_size_gb": 30,
+       "name": "example-machine_OsDisk_1_9f7a1581e67b4d7a88f607ae64d52019",
+       "storage_account_type": "Standard_LRS",
+       "write_accelerator_enabled": false
+      }
+     ],
+     "patch_mode": "ImageDefault",
+     "plan": [],
+     "platform_fault_domain": -1,
+     "priority": "Regular",
+     "private_ip_address": "10.0.2.5",
+     "private_ip_addresses": [
+      "10.0.2.5"
+     ],
+     "provision_vm_agent": true,
+     "proximity_placement_group_id": "",
+     "public_ip_address": "",
+     "public_ip_addresses": [],
+     "resource_group_name": "copilot-workshop-resources",
+     "secret": [],
+     "secure_boot_enabled": false,
+     "size": "Standard_F2",
+     "source_image_id": "",
+     "source_image_reference": [
+      {
+       "offer": "0001-com-ubuntu-server-jammy",
+       "publisher": "Canonical",
+       "sku": "22_04-lts",
+       "version": "latest"
+      }
+     ],
+     "tags": {},
+     "timeouts": null,
+     "user_data": "",
+     "virtual_machine_id": "a4dbd25f-0aea-4ee1-9dcc-cbe077c0cb41",
+     "virtual_machine_scale_set_id": "",
+     "vtpm_enabled": false,
+     "zone": ""
+    },
+    "after_sensitive": {
+     "additional_capabilities": [],
+     "admin_password": true,
+     "admin_ssh_key": [
+      {}
+     ],
+     "boot_diagnostics": [],
+     "custom_data": true,
+     "identity": [],
+     "network_interface_ids": [
+      false
+     ],
+     "os_disk": [
+      {
+       "diff_disk_settings": []
+      }
+     ],
+     "plan": [],
+     "private_ip_addresses": [
+      false
+     ],
+     "public_ip_addresses": [],
+     "secret": [],
+     "source_image_reference": [
+      {}
+     ],
+     "tags": {}
+    },
+    "after_unknown": {},
+    "before": {
+     "additional_capabilities": [],
+     "admin_password": null,
+     "admin_ssh_key": [
+      {
+       "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCoqbylWTLI4z/nc1bp0GRliFi+APiLuGfFl0ubUcVgbo1yPsreIan3J4/pSK5cAWGoVIfQebduChm84gW6VbCzJJ1FdZ10N7Ddmrv2FKPaHNdCUhUMMJHFRkoXiQR7vSyHgA/8vj3XxAeKKp8e7ZihmY28lhLXwZ8pky9GEyPa2Qg4LrF1S3CxFx3gtbs4cd9DwzcLsH8tIK6aeGqrpagP57lxQ10Dm4Mv8jWqsKYDsojguqpZtE3CMz9SGZAbT3AG119KL8BVnz0djizsI+NICy+MbBbojfjZz+7IutcippwatA/NZvhQX0IgHNZsVZTmBDYY+nAFQvf8ZSA5dX0se1Vm9fVbsM0wfc+sbT9VeqU7hGLeBRAI+26GvA2VHEjCPQKeJZ227sKn5TKv3aFGRx+AJKd2EincUwKBV26r6mFwOlrBVIidwA+SvJ0VTebZ+vPWVVNE2UOONqTnySI2UlMZqbho6YX7UIwwsixiHjajjFw1QVdLiJ33IU7lDpU= generated-by-azure",
+       "username": "adminuser"
+      }
+     ],
+     "admin_username": "adminuser",
+     "allow_extension_operations": true,
+     "availability_set_id": "",
+     "boot_diagnostics": [],
+     "computer_name": "example-machine",
+     "custom_data": null,
+     "dedicated_host_group_id": "",
+     "dedicated_host_id": "",
+     "disable_password_authentication": true,
+     "encryption_at_host_enabled": false,
+     "eviction_policy": "",
+     "extensions_time_budget": "PT1H30M",
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine",
+     "identity": [],
+     "license_type": "",
+     "location": "japaneast",
+     "max_bid_price": -1,
+     "name": "example-machine",
+     "network_interface_ids": [
+      "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2"
+     ],
+     "os_disk": [
+      {
+       "caching": "ReadWrite",
+       "diff_disk_settings": [],
+       "disk_encryption_set_id": "",
+       "disk_size_gb": 30,
+       "name": "example-machine_OsDisk_1_9f7a1581e67b4d7a88f607ae64d52019",
+       "storage_account_type": "Standard_LRS",
+       "write_accelerator_enabled": false
+      }
+     ],
+     "patch_mode": "ImageDefault",
+     "plan": [],
+     "platform_fault_domain": -1,
+     "priority": "Regular",
+     "private_ip_address": "10.0.2.5",
+     "private_ip_addresses": [
+      "10.0.2.5"
+     ],
+     "provision_vm_agent": true,
+     "proximity_placement_group_id": "",
+     "public_ip_address": "",
+     "public_ip_addresses": [],
+     "resource_group_name": "copilot-workshop-resources",
+     "secret": [],
+     "secure_boot_enabled": false,
+     "size": "Standard_F2",
+     "source_image_id": "",
+     "source_image_reference": [
+      {
+       "offer": "0001-com-ubuntu-server-jammy",
+       "publisher": "Canonical",
+       "sku": "22_04-lts",
+       "version": "latest"
+      }
+     ],
+     "tags": null,
+     "timeouts": null,
+     "user_data": "",
+     "virtual_machine_id": "a4dbd25f-0aea-4ee1-9dcc-cbe077c0cb41",
+     "virtual_machine_scale_set_id": "",
+     "vtpm_enabled": false,
+     "zone": ""
+    },
+    "before_sensitive": {
+     "additional_capabilities": [],
+     "admin_password": true,
+     "admin_ssh_key": [
+      {}
+     ],
+     "boot_diagnostics": [],
+     "custom_data": true,
+     "identity": [],
+     "network_interface_ids": [
+      false
+     ],
+     "os_disk": [
+      {
+       "diff_disk_settings": []
+      }
+     ],
+     "plan": [],
+     "private_ip_addresses": [
+      false
+     ],
+     "public_ip_addresses": [],
+     "secret": [],
+     "source_image_reference": [
+      {}
+     ]
+    }
+   },
+   "mode": "managed",
+   "name": "example",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_linux_virtual_machine"
+  },
+  {
+   "address": "azurerm_network_interface.internal",
+   "change": {
+    "actions": [
+     "update"
+    ],
+    "after": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "enable_accelerated_networking": false,
+     "enable_ip_forwarding": false,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2",
+     "internal_dns_name_label": "",
+     "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+     "ip_configuration": [
+      {
+       "gateway_load_balancer_frontend_ip_configuration_id": "",
+       "name": "internal",
+       "primary": true,
+       "private_ip_address": "10.0.2.5",
+       "private_ip_address_allocation": "Dynamic",
+       "private_ip_address_version": "IPv4",
+       "public_ip_address_id": "",
+       "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+      }
+     ],
+     "location": "japaneast",
+     "mac_address": "00-22-48-69-19-D0",
+     "name": "copilot-workshop-nic2",
+     "private_ip_address": "10.0.2.5",
+     "private_ip_addresses": [
+      "10.0.2.5"
+     ],
+     "resource_group_name": "copilot-workshop-resources",
+     "tags": {},
+     "timeouts": null,
+     "virtual_machine_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Compute/virtualMachines/example-machine"
+    },
+    "after_sensitive": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "ip_configuration": [
+      {}
+     ],
+     "private_ip_addresses": [
+      false
+     ],
+     "tags": {}
+    },
+    "after_unknown": {},
+    "before": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "enable_accelerated_networking": false,
+     "enable_ip_forwarding": false,
+     "id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/networkInterfaces/copilot-workshop-nic2",
+     "internal_dns_name_label": "",
+     "internal_domain_name_suffix": "qa5wz0byyp5ebdqhckuixgw1bg.lx.internal.cloudapp.net",
+     "ip_configuration": [
+      {
+       "gateway_load_balancer_frontend_ip_configuration_id": "",
+       "name": "internal",
+       "primary": true,
+       "private_ip_address": "10.0.2.5",
+       "private_ip_address_allocation": "Dynamic",
+       "private_ip_address_version": "IPv4",
+       "public_ip_address_id": "",
+       "subnet_id": "/subscriptions/4a638e79-e52d-4f0e-ba58-e6cc63b85ee3/resourceGroups/copilot-workshop-resources/providers/Microsoft.Network/virtualNetworks/copilot-workshop-network/subnets/internal"
+      }
+     ],
+     "location": "japaneast",
+     "mac_address": "",
+     "name": "copilot-workshop-nic2",
+     "private_ip_address": "10.0.2.5",
+     "private_ip_addresses": [
+      "10.0.2.5"
+     ],
+     "resource_group_name": "copilot-workshop-resources",
+     "tags": {},
+     "timeouts": null,
+     "virtual_machine_id": ""
+    },
+    "before_sensitive": {
+     "applied_dns_servers": [],
+     "dns_servers": [],
+     "ip_configuration": [
+      {}
+     ],
+     "private_ip_addresses": [
+      false
+     ],
+     "tags": {}
+    }
+   },
+   "mode": "managed",
+   "name": "internal",
+   "provider_name": "registry.terraform.io/hashicorp/azurerm",
+   "type": "azurerm_network_interface"
+  }
+ ],
+ "terraform_version": "1.6.4",
+ "timestamp": "2023-11-24T09:20:18Z",
+ "variables": {
+  "admin_password": {
+   "value": "P@ssw0rd1234"
+  },
+  "location": {
+   "value": "japaneast"
+  },
+  "prefix": {
+   "value": "copilot-workshop"
+  }
+ }
+}]

@@ -12,3 +12,4 @@ variable "admin_password" {
   description = "Virtual Machine admin password"
   default = "P@ssw0rd1234"
 }
+

@@ -114,7 +114,7 @@ resource "azurerm_network_interface_security_group_association" "main" {
 }
 
 
-// Virtual Machine
+// DEfine Azure VM resource
 resource "azurerm_linux_virtual_machine" "example" {
   name                = "example-machine"
   location              = azurerm_resource_group.main.location
